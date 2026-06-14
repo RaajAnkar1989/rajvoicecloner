@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RajVoiceCloner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">R</div>
+        <div>
+          <div class="brand-name">RajVoiceCloner</div>
+          <div class="brand-sub">Your personal voice AI platform</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <button class="nav-item active" data-view="tts">
+          <span class="nav-icon">&#9836;</span> Text to Speech
+        </button>
+        <button class="nav-item" data-view="design">
+          <span class="nav-icon">&#10024;</span> Voice Design
+        </button>
+        <button class="nav-item" data-view="voices">
+          <span class="nav-icon">&#127908;</span> Voices
+        </button>
+        <button class="nav-item" data-view="agents">
+          <span class="nav-icon">&#128222;</span> Voice Agents
+        </button>
+        <button class="nav-item" data-view="history">
+          <span class="nav-icon">&#128336;</span> History
+        </button>
+        <button class="nav-item" data-view="settings">
+          <span class="nav-icon">&#9881;</span> Settings
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <div id="server-status" class="status"><span class="dot dot-idle"></span> Checking server…</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <!-- ===================== TEXT TO SPEECH ===================== -->
+      <section class="view active" id="view-tts">
+        <header class="view-header">
+          <h1>Text to Speech</h1>
+          <p>Turn text into lifelike speech with any voice in your library.</p>
+        </header>
+        <div class="tts-layout">
+          <div class="tts-editor card">
+            <textarea id="tts-text" placeholder="Type or paste your text here…&#10;&#10;Tip: the first generation loads the model and can take a while."></textarea>
+            <div class="editor-footer">
+              <span id="char-count" class="muted">0 characters</span>
+              <div class="editor-actions">
+                <button id="btn-stream" class="btn btn-ghost" title="Start playback as audio is generated">
+                  &#9654; Stream
+                </button>
+                <button id="btn-generate" class="btn btn-primary">Generate speech</button>
+              </div>
+            </div>
+            <div id="player-area" class="player-area hidden">
+              <audio id="player" controls></audio>
+              <a id="btn-download" class="btn btn-ghost" download="rajvoicecloner-speech.wav">Download</a>
+            </div>
+            <div id="tts-status" class="gen-status hidden"></div>
+          </div>
+
+          <div class="tts-settings">
+            <div class="card">
+              <h3>Voice</h3>
+              <select id="voice-select" class="select"></select>
+              <div id="voice-meta" class="voice-meta muted"></div>
+              <label class="field-label" for="tts-control">Style instruction <span class="muted">(optional)</span></label>
+              <input id="tts-control" class="input" placeholder="e.g. whispering, very excited, sad tone" />
+            </div>
+            <div class="card">
+              <h3>Settings</h3>
+              <label class="field-label">Stability <span id="stability-val" class="muted">0.50</span></label>
+              <input id="stability" type="range" min="0" max="1" step="0.05" value="0.5" />
+              <label class="field-label">Quality (diffusion steps) <span id="steps-val" class="muted">10</span></label>
+              <input id="steps" type="range" min="4" max="30" step="1" value="10" />
+              <label class="check"><input id="normalize" type="checkbox" /> Text normalization</label>
+              <label class="check"><input id="denoise" type="checkbox" checked /> Denoise reference audio</label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== VOICE DESIGN ===================== -->
+      <section class="view" id="view-design">
+        <header class="view-header">
+          <h1>Voice Design</h1>
+          <p>Describe a voice in plain language and RajVoiceCloner will create it from scratch.</p>
+        </header>
+        <div class="design-layout">
+          <div class="card">
+            <label class="field-label" for="design-desc">Voice description</label>
+            <textarea id="design-desc" class="small-textarea" placeholder="A deep, gravelly male voice with a slow southern drawl, like an old western cowboy"></textarea>
+            <label class="field-label" for="design-text">Preview text</label>
+            <textarea id="design-text" class="small-textarea">Hello! I am your newly designed voice. I hope you like how I sound.</textarea>
+            <div class="row gap">
+              <button id="btn-design-preview" class="btn btn-primary">Generate preview</button>
+              <button id="btn-design-save" class="btn btn-ghost" disabled>Save to library</button>
+            </div>
+            <div id="design-player-area" class="player-area hidden">
+              <audio id="design-player" controls></audio>
+            </div>
+            <div id="design-status" class="gen-status hidden"></div>
+          </div>
+          <div class="card hints">
+            <h3>Prompt ideas</h3>
+            <button class="hint">A warm, expressive young female voice with an American accent, friendly and conversational</button>
+            <button class="hint">An elderly British gentleman, slow and thoughtful, like a nature documentary narrator</button>
+            <button class="hint">An energetic sports commentator, fast-paced and loud with rising excitement</button>
+            <button class="hint">A distinct original young Telugu male cinematic voice, natural human studio-quality delivery, warm chest resonance, clear Telugu diction, expressive emotional phrasing, confident heroic presence, realistic pauses, modern Hyderabad cadence, grounded and believable, never robotic</button>
+            <button class="hint">A calm meditation guide, breathy, slow and soothing</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== VOICES ===================== -->
+      <section class="view" id="view-voices">
+        <header class="view-header row space-between">
+          <div>
+            <h1>Voices</h1>
+            <p>Your voice library: premade, designed, and instantly cloned voices.</p>
+          </div>
+          <button id="btn-add-voice" class="btn btn-primary">+ Add voice</button>
+        </header>
+        <div id="voices-grid" class="voices-grid"></div>
+      </section>
+
+      <!-- ===================== VOICE AGENTS ===================== -->
+      <section class="view" id="view-agents">
+        <header class="view-header row space-between">
+          <div>
+            <h1>Voice Agents</h1>
+            <p>Build an agent from a prompt and a questionnaire, then talk to it live.</p>
+          </div>
+          <button id="btn-new-agent" class="btn btn-primary">+ New agent</button>
+        </header>
+
+        <div id="agents-list" class="voices-grid"></div>
+
+        <!-- live call screen -->
+        <div id="call-screen" class="call-screen hidden">
+          <div class="card call-card">
+            <div class="row space-between">
+              <div>
+                <div class="voice-name" id="call-agent-name"></div>
+                <div class="muted" id="call-progress"></div>
+              </div>
+              <button id="btn-end-call" class="btn btn-danger">End call</button>
+            </div>
+            <div class="call-state" id="call-state">
+              <div class="call-orb" id="call-orb"></div>
+              <div id="call-state-text">Connecting…</div>
+            </div>
+            <div class="row gap call-controls">
+              <button id="btn-done-answer" class="btn btn-primary hidden">&#10003; Done answering</button>
+            </div>
+            <div class="call-log" id="call-log"></div>
+            <div id="call-results" class="hidden">
+              <h3>Results</h3>
+              <div id="call-results-body"></div>
+              <a id="btn-download-results" class="btn btn-ghost" download="call-results.json">Download results (JSON)</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== HISTORY ===================== -->
+      <section class="view" id="view-history">
+        <header class="view-header">
+          <h1>History</h1>
+          <p>Every generation is saved here so you never lose a take.</p>
+        </header>
+        <div id="history-list" class="history-list"></div>
+      </section>
+      <!-- ===================== SETTINGS ===================== -->
+      <section class="view" id="view-settings">
+        <header class="view-header">
+          <h1>Settings</h1>
+          <p>Connect a local LLM for smart agents and set studio defaults. Changes apply instantly.</p>
+        </header>
+        <div class="settings-layout">
+          <div class="card">
+            <h3>Language model (smart agents)</h3>
+            <label class="field-label" for="set-llm-url">Server URL <span class="muted">(OpenAI-compatible: Ollama, LM Studio, llama.cpp, vLLM)</span></label>
+            <input id="set-llm-url" class="input" placeholder="http://localhost:11434/v1" />
+            <label class="field-label" for="set-llm-model">Model</label>
+            <div class="row gap">
+              <input id="set-llm-model" class="input" list="llm-models-list" placeholder="llama3.2" />
+              <button id="btn-llm-refresh" class="btn btn-ghost" title="Fetch models from the server">&#8635;</button>
+            </div>
+            <datalist id="llm-models-list"></datalist>
+            <label class="field-label" for="set-llm-key">API key <span class="muted">(only if your LLM server requires one)</span></label>
+            <input id="set-llm-key" class="input" type="password" placeholder="leave empty for none" />
+            <div id="llm-test-result" class="gen-status hidden"></div>
+            <div class="row gap" style="margin-top: 16px;">
+              <button id="btn-llm-test" class="btn btn-ghost">Test connection</button>
+              <button id="btn-settings-save" class="btn btn-primary">Save settings</button>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Defaults</h3>
+            <label class="field-label" for="set-default-voice">Default voice <span class="muted">(used in the playground and as suggestion for new agents)</span></label>
+            <select id="set-default-voice" class="select"></select>
+            <div class="settings-help muted">
+              <p><strong>Quick start with Ollama:</strong></p>
+              <p>1. <code>ollama serve</code> (or open the Ollama app)</p>
+              <p>2. <code>ollama pull llama3.2</code></p>
+              <p>3. Click "Test connection", pick the model, save.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ===================== ADD VOICE MODAL ===================== -->
+  <div id="modal-add-voice" class="modal hidden">
+    <div class="modal-card">
+      <div class="row space-between">
+        <h2>Add a voice</h2>
+        <button class="btn-close" id="btn-close-modal">&times;</button>
+      </div>
+      <label class="field-label" for="new-voice-name">Name</label>
+      <input id="new-voice-name" class="input" placeholder="e.g. My narration voice" />
+
+      <div class="tabs">
+        <button class="tab active" data-tab="clone">Instant clone</button>
+        <button class="tab" data-tab="describe">Describe</button>
+      </div>
+
+      <div id="tab-clone" class="tab-panel active">
+        <p class="muted">Upload or record 5&ndash;30 seconds of clean speech. A transcript is detected automatically for best cloning quality.</p>
+        <div class="row gap">
+          <label class="btn btn-ghost file-btn">
+            Upload audio
+            <input id="clone-file" type="file" accept="audio/*" hidden />
+          </label>
+          <button id="btn-record" class="btn btn-ghost">&#9210; Record</button>
+        </div>
+        <div id="clone-file-info" class="muted file-info"></div>
+        <audio id="clone-preview" class="hidden" controls></audio>
+        <label class="field-label" for="clone-transcript">Transcript <span class="muted">(optional, auto-detected if empty)</span></label>
+        <textarea id="clone-transcript" class="small-textarea" placeholder="What is said in the sample…"></textarea>
+      </div>
+
+      <div id="tab-describe" class="tab-panel">
+        <label class="field-label" for="new-voice-desc">Voice description</label>
+        <textarea id="new-voice-desc" class="small-textarea" placeholder="A bright, cheerful young female voice with crisp articulation"></textarea>
+      </div>
+
+      <div id="add-voice-status" class="gen-status hidden"></div>
+      <button id="btn-save-voice" class="btn btn-primary full">Create voice</button>
+    </div>
+  </div>
+
+  <!-- ===================== NEW AGENT MODAL ===================== -->
+  <div id="modal-new-agent" class="modal hidden">
+    <div class="modal-card">
+      <div class="row space-between">
+        <h2 id="agent-modal-title">New voice agent</h2>
+        <button class="btn-close" id="btn-close-agent-modal">&times;</button>
+      </div>
+      <label class="field-label" for="agent-name">Name</label>
+      <input id="agent-name" class="input" placeholder="e.g. Customer feedback survey" />
+
+      <label class="field-label" for="agent-voice">Voice <span class="muted">(library voice, used as fallback)</span></label>
+      <select id="agent-voice" class="select"></select>
+
+      <label class="field-label" for="agent-call-voice">Call voice <span class="muted">(realtime voice used on live calls)</span></label>
+      <select id="agent-call-voice" class="select"></select>
+
+      <label class="field-label" for="agent-prompt">Greeting / persona prompt <span class="muted">(spoken at the start)</span></label>
+      <textarea id="agent-prompt" class="small-textarea" placeholder="Hi! I'm Mia from Acme. I'd love to ask you a few quick questions about your recent order. It will only take a minute."></textarea>
+
+      <label class="field-label" for="agent-questions">Questionnaire <span class="muted">(one question per line)</span></label>
+      <textarea id="agent-questions" class="small-textarea" placeholder="How satisfied are you with your purchase, from one to ten?&#10;What did you like most about the product?&#10;Is there anything we could improve?"></textarea>
+
+      <div class="row gap">
+        <label class="btn btn-ghost file-btn">
+          Upload prompt &amp; questionnaire
+          <input id="agent-file" type="file" accept=".txt,.json,.csv" hidden />
+        </label>
+        <span class="muted" id="agent-file-info"></span>
+      </div>
+
+      <label class="field-label" for="agent-closing">Closing line <span class="muted">(optional)</span></label>
+      <input id="agent-closing" class="input" placeholder="That was my last question. Thanks for your time, goodbye!" />
+
+      <div id="new-agent-status" class="gen-status hidden"></div>
+      <button id="btn-save-agent" class="btn btn-primary full">Create agent</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

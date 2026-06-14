@@ -1,0 +1,107 @@
+[build-system]
+requires = ["setuptools>=64", "wheel", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rajvoicecloner"
+dynamic = ["version"]
+description = "RajVoiceCloner: a self-hosted AI voice cloning and text-to-speech studio"
+readme = "README.md"
+license = "Apache-2.0"
+authors = [
+    {name = "RajVoiceCloner"}
+]
+maintainers = [
+    {name = "RajVoiceCloner"}
+]
+keywords = ["rajvoicecloner", "text-to-speech", "tts", "speech-synthesis", "voice-cloning", "ai", "deep-learning", "pytorch"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.5.0",
+    "torchaudio>=2.5.0",
+    "torchcodec",
+    "transformers>=4.36.2",
+    "einops",
+    "gradio>=6,<7",
+    "inflect",
+    "addict",
+    "wetext",
+    "modelscope>=1.22.0",
+    "datasets>=3,<4",
+    "huggingface-hub",
+    "pydantic",
+    "tqdm",
+    "simplejson",
+    "sortedcontainers",
+    "soundfile",
+    "soxr",
+    "librosa",
+    "matplotlib",
+    "funasr",
+    "spaces",
+    "argbind",
+    "safetensors",
+    "fastapi",
+    "uvicorn",
+    "python-multipart",
+    "requests"
+]
+
+[project.optional-dependencies]
+realtime = [
+    "kokoro-onnx>=0.4",
+]
+dev = [
+    "pytest>=6.0",
+    "pytest-cov>=2.0",
+    "black>=21.0",
+    "flake8>=3.8",
+    "pre-commit>=2.0",
+]
+
+[project.scripts]
+rajvoicecloner = "rajvoicecloner.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/raaj/rajvoicecloner"
+Repository = "https://github.com/raaj/rajvoicecloner.git"
+Documentation = "https://github.com/raaj/rajvoicecloner#readme"
+"Bug Tracker" = "https://github.com/raaj/rajvoicecloner/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["rajvoicecloner*"]
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.setuptools.package-data]
+"rajvoicecloner.server" = ["static/*"]
+
+[tool.setuptools_scm]
+version_scheme = "post-release"
+
+[tool.black]
+line-length = 120
+target-version = ['py310']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
